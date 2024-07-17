@@ -26,7 +26,7 @@ sudo chmod +x /opt/micromamba/envs/comfyui/bin/pget
 
 # Clone the ComfyUI repo (credential expires in September 2024)
 export REPO_NAME="cog-comfyui"
-git clone https://github.com/jordancoult/$REPO_NAME.git "$WORKSPACE/$REPO_NAME"
+git clone -b develop https://github.com/jordancoult/$REPO_NAME.git "$WORKSPACE/$REPO_NAME"
 
 # Get python packages from cog.yaml
 PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' $WORKSPACE/$REPO_NAME/cog.yaml)
