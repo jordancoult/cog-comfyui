@@ -155,40 +155,9 @@ function install_from_workflow() {
     micromamba -n comfyui run python3 $WORKSPACE/$REPO_NAME/installFromWorkflow.py $WORKSPACE/$workflow_file
 }
 
-function provisioning_get_nodes() {
-    for repo in "${NODES[@]}"; do
-        dir="${repo##*/}"
-        path="/opt/ComfyUI/custom_nodes/${dir}"
-        requirements="${path}/requirements.txt"
-        if [[ -d $path ]]; then
-            if [[ ${AUTO_UPDATE,,} != "false" ]]; then
-                printf "Updating node: %s...\n" "${repo}"
-                ( cd "$path" && git pull )
-                if [[ -e $requirements ]]; then
-                    micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
-                fi
-            fi
-        else
-            printf "Downloading node: %s...\n" "${repo}"
-            git clone "${repo}" "${path}" --recursive
-            if [[ -e $requirements ]]; then
-                micromamba -n comfyui run ${PIP_INSTALL} -r "${requirements}"
-            fi
-        fi
-    done
-}
-
 function provisioning_get_nodes_from_json() {
     # Use cat to read the JSON content from a file into a variable
-    local json_content=$(cat "custom_nodes.json")  # todo: the reseource doesnt exist yet
-
-    # if url is invalid or empty, return
-    if [[ -z $json_content ]]; then
-        printf "Failed to download JSON content from URL: $JSON_NODES_URL"
-        return 1
-    fi
-
-    printf "Processing nodes from JSON URL: $JSON_NODES_URL"
+    local json_content=$(cat "$WORKSPACE/$REPO_NAME/custom_nodes.json")  # todo: the reseource doesnt exist yet
 
     # Parse the JSON content directly from the variable
     local repos=$(printf "$json_content" | jq -c '.[]')
@@ -212,6 +181,29 @@ function provisioning_get_nodes_from_json() {
             (cd "$path" && git checkout "$commit")
             if [[ -e $requirements ]]; then
                 micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
+            fi
+        fi
+    done
+}
+
+function provisioning_get_nodes() {
+    for repo in "${NODES[@]}"; do
+        dir="${repo##*/}"
+        path="/opt/ComfyUI/custom_nodes/${dir}"
+        requirements="${path}/requirements.txt"
+        if [[ -d $path ]]; then
+            if [[ ${AUTO_UPDATE,,} != "false" ]]; then
+                printf "Updating node: %s...\n" "${repo}"
+                ( cd "$path" && git pull )
+                if [[ -e $requirements ]]; then
+                    micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
+                fi
+            fi
+        else
+            printf "Downloading node: %s...\n" "${repo}"
+            git clone "${repo}" "${path}" --recursive
+            if [[ -e $requirements ]]; then
+                micromamba -n comfyui run ${PIP_INSTALL} -r "${requirements}"
             fi
         fi
     done
