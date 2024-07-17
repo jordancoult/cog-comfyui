@@ -2,60 +2,49 @@
 
 # This file will be sourced in init.sh
 
-# https://raw.githubusercontent.com/ai-dock/comfyui/main/config/provisioning/default.sh
+# https://raw.githubusercontent.com/jordancoult/cog-comfyui/develop/ai-dock-comfyui-provisioner.sh
 
 # Packages are installed after nodes so we can fix them...
 
-PYTHON_PACKAGES=(
-    # --- Confirmed missing
-    "ultralytics!=8.0.177"
-    # --- Not sure if the following are already installed. They come from the cog.yaml
-    "diffusers>=0.25.0"
-    # comfyui-reactor-node
-    "insightface"
-    "onnx"
-    # ComfyUI-Impact-Pack
-    "segment-anything"
-    "piexif"
-    # ComfyUI-Impact-Subpack
-    "ultralytics!=8.0.177"
-    # comfyui_segment_anything
-    "timm"
-    # comfyui_controlnet_aux
-    "importlib_metadata"
-    "opencv-python-headless>=4.0.1.24"
-    "filelock"
-    "numpy"
-    "einops"
-    "pyyaml"
-    "scikit-image"
-    "python-dateutil"
-    "mediapipe"
-    "svglib"
-    "fvcore"
-    "yapf"
-    "omegaconf"
-    "ftfy"
-    "addict"
-    "yacs"
-    "trimesh[easy]"
-    # ComfyUI-KJNodes
-    "librosa"
-    "color-matcher"
-    # PuLID
-    "facexlib"
-)
+# Install packages for cog parsing
+if ! command -v jq &> /dev/null
+then
+    echo "jq could not be found, installing..."
+    sudo apt-get update && sudo apt-get install -y jq
+fi
+if ! command -v yq &> /dev/null
+then
+    echo "yq could not be found, installing..."
+    sudo snap install yq
+fi
+
+# Get python packages from cog.yaml
+PYTHON_PACKAGES=$(yq e '.build.python_packages' -o=json cog.yaml | jq -r '.[]' | tr '\n' ' ')
+
+# # Set specific python version from cog.yaml
+# PYTHON_VERSION=$(yq e '.build.python_version' -o=json cog.yaml | jq -r '.')
+# # Install the specific Python version using pyenv
+# if ! pyenv versions | grep -q "$PYTHON_VERSION"; then
+#     echo "Installing Python $PYTHON_VERSION with pyenv..."
+#     pyenv install "$PYTHON_VERSION"
+# fi
+# # Set the local Python version
+# pyenv local "$PYTHON_VERSION"
+# # Verify the Python version
+# python --version
 
 NODES=(
     "https://github.com/ltdrdata/ComfyUI-Manager"
 )
+# Nodes specified in custom_nodes.json will also be installed
 
-# In the same way as above, node repos specified in this JSON will load, but with commit specified
-JSON_NODES_URL="https://raw.githubusercontent.com/fofr/cog-consistent-character/main/custom_nodes.json"
+WORKFLOW_API_URL="https://raw.githubusercontent.com/fofr/cog-consistent-character/main/workflow_api.json"
+WORKFLOW_UI_URL="https://raw.githubusercontent.com/fofr/cog-consistent-character/main/workflow_ui.json"
+
 
 CHECKPOINT_MODELS=(
-    "https://huggingface.co/Lykon/dreamshaper-xl-lightning/resolve/main/DreamShaperXL_Lightning.safetensors"
-    "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt"
+    #"https://huggingface.co/Lykon/dreamshaper-xl-lightning/resolve/main/DreamShaperXL_Lightning.safetensors"
+    #"https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt"
     #"https://huggingface.co/stabilityai/stable-diffusion-2-1/resolve/main/v2-1_768-ema-pruned.ckpt"
     #"https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors"
     #"https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0/resolve/main/sd_xl_refiner_1.0.safetensors"
@@ -66,33 +55,33 @@ LORA_MODELS=(
 )
 
 VAE_MODELS=(
-    "https://huggingface.co/stabilityai/sd-vae-ft-ema-original/resolve/main/vae-ft-ema-560000-ema-pruned.safetensors"
-    "https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-mse-840000-ema-pruned.safetensors"  # RV5.1
-    "https://huggingface.co/stabilityai/sdxl-vae/resolve/main/sdxl_vae.safetensors"
+    #"https://huggingface.co/stabilityai/sd-vae-ft-ema-original/resolve/main/vae-ft-ema-560000-ema-pruned.safetensors"
+    #"https://huggingface.co/stabilityai/sd-vae-ft-mse-original/resolve/main/vae-ft-mse-840000-ema-pruned.safetensors"  # RV5.1
+    #"https://huggingface.co/stabilityai/sdxl-vae/resolve/main/sdxl_vae.safetensors"
 )
 
 ESRGAN_MODELS=(
-    "https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x4.pth"
-    "https://huggingface.co/FacehugmanIII/4x_foolhardy_Remacri/resolve/main/4x_foolhardy_Remacri.pth"
-    "https://huggingface.co/Akumetsu971/SD_Anime_Futuristic_Armor/resolve/main/4x_NMKD-Siax_200k.pth"
+    #"https://huggingface.co/ai-forever/Real-ESRGAN/resolve/main/RealESRGAN_x4.pth"
+    #"https://huggingface.co/FacehugmanIII/4x_foolhardy_Remacri/resolve/main/4x_foolhardy_Remacri.pth"
+    #"https://huggingface.co/Akumetsu971/SD_Anime_Futuristic_Armor/resolve/main/4x_NMKD-Siax_200k.pth"
 )
 
 CONTROLNET_MODELS=(
-    "https://huggingface.co/Aitrepreneur/InstantID-Controlnet/blob/main/checkpoints/ControlNetModel/diffusion_pytorch_model.safetensors"  # instantid-controlnet
-    "https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/control_canny-fp16.safetensors"
+    #"https://huggingface.co/Aitrepreneur/InstantID-Controlnet/blob/main/checkpoints/ControlNetModel/diffusion_pytorch_model.safetensors"  # instantid-controlnet
+    #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/control_canny-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/control_depth-fp16.safetensors"
-    "https://huggingface.co/kohya-ss/ControlNet-diff-modules/resolve/main/diff_control_sd15_depth_fp16.safetensors"
+    #"https://huggingface.co/kohya-ss/ControlNet-diff-modules/resolve/main/diff_control_sd15_depth_fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/control_hed-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/control_mlsd-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/control_normal-fp16.safetensors"
-    "https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/control_openpose-fp16.safetensors"
+    #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/control_openpose-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/control_scribble-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/control_seg-fp16.safetensors"
-    "https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/t2iadapter_canny-fp16.safetensors"
+    #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/t2iadapter_canny-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/t2iadapter_color-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/t2iadapter_depth-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/t2iadapter_keypose-fp16.safetensors"
-    "https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/t2iadapter_openpose-fp16.safetensors"
+    #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/t2iadapter_openpose-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/t2iadapter_seg-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/t2iadapter_sketch-fp16.safetensors"
     #"https://huggingface.co/webui/ControlNet-modules-safetensors/resolve/main/t2iadapter_style-fp16.safetensors"
@@ -100,7 +89,7 @@ CONTROLNET_MODELS=(
 
 # https://github.com/huxiuhan/ComfyUI-InstantID
 INSTANTID_MODELS=(
-    "https://huggingface.co/InstantX/InstantID/resolve/main/ip-adapter.bin"
+    #"https://huggingface.co/InstantX/InstantID/resolve/main/ip-adapter.bin"
     # "https://huggingface.co/InstantX/InstantID/resolve/main/ControlNetModel/diffusion_pytorch_model.safetensors"
     # "https://huggingface.co/InstantX/InstantID/resolve/main/ControlNetModel/config.json"
 )
@@ -142,8 +131,19 @@ function provisioning_start() {
     provisioning_get_models \
         "${WORKSPACE}/storage/stable_diffusion/models/instantid" \
         "${INSTANTID_MODELS[@]}"
+    printf "Launching install from workflow script..."
+    install_from_workflow
     provisioning_print_end
     printf "Provisioning complete."
+}
+
+function install_from_workflow() {
+    # Download WORKFLOW_API_URL to a local file
+    local workflow_file="downloaded_workflow_api.json"
+    provisioning_download "${WORKFLOW_API_URL}" "${WORKSPACE}" "${workflow_file}"
+
+    # Run local python file installFromWorkflow.py workflow.json
+    micromamba -n comfyui run python3 installFromWorkflow.py ${workflow_file}
 }
 
 function provisioning_get_nodes() {
@@ -170,8 +170,8 @@ function provisioning_get_nodes() {
 }
 
 function provisioning_get_nodes_from_json() {
-    # Use curl to download the JSON content into a variable
-    local json_content=$(curl -s "$JSON_NODES_URL")
+    # Use cat to read the JSON content from a file into a variable
+    local json_content=$(cat "custom_nodes.json")
 
     # if url is invalid or empty, return
     if [[ -z $json_content ]]; then
