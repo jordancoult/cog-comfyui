@@ -15,11 +15,12 @@ fi
 if ! command -v yq &> /dev/null
 then
     echo "yq could not be found, installing..."
-    sudo snap install yq
+    wget https://github.com/mikefarah/yq/releases/download/v4.30.8/yq_linux_amd64 -O /usr/local/bin/yq
+    chmod +x /usr/local/bin/yq
 fi
 
 # Get python packages from cog.yaml
-PYTHON_PACKAGES=$(yq e '.build.python_packages' -o=json cog.yaml | jq -r '.[]' | tr '\n' ' ')
+PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' cog.yaml)
 
 # # Set specific python version from cog.yaml
 # PYTHON_VERSION=$(yq e '.build.python_version' -o=json cog.yaml | jq -r '.')
@@ -103,34 +104,34 @@ function provisioning_start() {
     DISK_GB_ALLOCATED=$(($DISK_GB_AVAILABLE + $DISK_GB_USED))
     provisioning_print_header
     printf "Getting nodes..."
-    provisioning_get_nodes
+    provisioning_get_nodes  # get nodes listed above
     printf "Getting nodes from JSON..."
-    provisioning_get_nodes_from_json
+    provisioning_get_nodes_from_json  # get nodes from local JSON file
     printf "Installing Python packages..."
     provisioning_install_python_packages
-    printf "Getting Stable Diffusion checkpoint models..."
-    provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
-        "${CHECKPOINT_MODELS[@]}"
-    printf "Getting Stable Diffusion LoRA models..."
-    provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/lora" \
-        "${LORA_MODELS[@]}"
-    printf "Getting Stable Diffusion ControlNet models..."
-    provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/controlnet" \
-        "${CONTROLNET_MODELS[@]}"
-    printf "Getting Stable Diffusion VAE models..."
-    provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/vae" \
-        "${VAE_MODELS[@]}"
-    printf "Getting Stable Diffusion ESRGAN models..."
-    provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/esrgan" \
-        "${ESRGAN_MODELS[@]}"
-    provisioning_get_models \
-        "${WORKSPACE}/storage/stable_diffusion/models/instantid" \
-        "${INSTANTID_MODELS[@]}"
+    # printf "Getting Stable Diffusion checkpoint models..."
+    # provisioning_get_models \
+    #     "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
+    #     "${CHECKPOINT_MODELS[@]}"
+    # printf "Getting Stable Diffusion LoRA models..."
+    # provisioning_get_models \
+    #     "${WORKSPACE}/storage/stable_diffusion/models/lora" \
+    #     "${LORA_MODELS[@]}"
+    # printf "Getting Stable Diffusion ControlNet models..."
+    # provisioning_get_models \
+    #     "${WORKSPACE}/storage/stable_diffusion/models/controlnet" \
+    #     "${CONTROLNET_MODELS[@]}"
+    # printf "Getting Stable Diffusion VAE models..."
+    # provisioning_get_models \
+    #     "${WORKSPACE}/storage/stable_diffusion/models/vae" \
+    #     "${VAE_MODELS[@]}"
+    # printf "Getting Stable Diffusion ESRGAN models..."
+    # provisioning_get_models \
+    #     "${WORKSPACE}/storage/stable_diffusion/models/esrgan" \
+    #     "${ESRGAN_MODELS[@]}"
+    # provisioning_get_models \
+    #     "${WORKSPACE}/storage/stable_diffusion/models/instantid" \
+    #     "${INSTANTID_MODELS[@]}"
     printf "Launching install from workflow script..."
     install_from_workflow
     provisioning_print_end
@@ -171,7 +172,7 @@ function provisioning_get_nodes() {
 
 function provisioning_get_nodes_from_json() {
     # Use cat to read the JSON content from a file into a variable
-    local json_content=$(cat "custom_nodes.json")
+    local json_content=$(cat "custom_nodes.json")  # todo: the reseource doesnt exist yet
 
     # if url is invalid or empty, return
     if [[ -z $json_content ]]; then
