@@ -19,8 +19,17 @@ then
     chmod +x /usr/local/bin/yq
 fi
 
+# Install other required Ubuntu packages into micromamba env
+# Replicate/pget
+sudo curl -o /opt/micromamba/envs/comfyui/bin/pget -L "https://github.com/replicate/pget/releases/latest/download/pget_$(uname -s)_$(uname -m)"
+sudo chmod +x /opt/micromamba/envs/comfyui/bin/pget
+
+# Clone the ComfyUI repo (credential expires in September 2024)
+export REPO_NAME="cog-comfyui"
+git clone https://github.com/jordancoult/$REPO_NAME.git "$WORKSPACE/$REPO_NAME"
+
 # Get python packages from cog.yaml
-PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' cog.yaml)
+PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' $WORKSPACE/$REPO_NAME/cog.yaml)
 
 # # Set specific python version from cog.yaml
 # PYTHON_VERSION=$(yq e '.build.python_version' -o=json cog.yaml | jq -r '.')
@@ -142,9 +151,8 @@ function install_from_workflow() {
     # Download WORKFLOW_API_URL to a local file
     local workflow_file="downloaded_workflow_api.json"
     provisioning_download "${WORKFLOW_API_URL}" "${WORKSPACE}" "${workflow_file}"
-
     # Run local python file installFromWorkflow.py workflow.json
-    micromamba -n comfyui run python3 installFromWorkflow.py ${workflow_file}
+    micromamba -n comfyui run python3 $WORKSPACE/$REPO_NAME/installFromWorkflow.py $WORKSPACE/$workflow_file
 }
 
 function provisioning_get_nodes() {
@@ -243,6 +251,8 @@ function provisioning_print_header() {
 }
 
 function provisioning_print_end() {
+    printf "To prepare comfy for a new workflow manually, run the following commands, but replace the last arg with your file:\n"
+    printf "micromamba -n comfyui run python3 $WORKSPACE/$REPO_NAME/installFromWorkflow.py $WORKSPACE/$workflow_file"
     printf "\nProvisioning complete:  Web UI will start now\n\n"
 }
 
