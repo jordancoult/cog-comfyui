@@ -246,7 +246,7 @@ function provisioning_print_header() {
 
 function provisioning_print_end() {
     printf "To prepare comfy for a new workflow manually, run the following commands, but replace the last arg with your file:\n"
-    printf "micromamba -n comfyui run python3 $WORKSPACE/$REPO_NAME/installFromWorkflow.py $WORKSPACE/filename.json"
+    printf "micromamba -n comfyui run python3 ${WORKSPACE}${REPO_NAME}/installFromWorkflow.py ${WORKSPACE}filename.json"
     printf "\nProvisioning complete:  Web UI will start now\n\n"
 }
 
