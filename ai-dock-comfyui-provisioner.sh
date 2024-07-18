@@ -112,11 +112,11 @@ function provisioning_start() {
     DISK_GB_USED=$(($(df --output=used -m "${WORKSPACE}" | tail -n1) / 1000))
     DISK_GB_ALLOCATED=$(($DISK_GB_AVAILABLE + $DISK_GB_USED))
     provisioning_print_header
-    printf "\n##############################################\n#                                            #\n#          Provisioning_get_nodes                                   #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
+    printf "\n##############################################\n#                                            #\n#          Provisioning_get_nodes                                      #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
     provisioning_get_nodes  # get nodes listed above
-    printf "\n##############################################\n#                                            #\n#          Provisioning_get_nodes_from_json (from custom_notes.json)#\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
+    printf "\n##############################################\n#                                            #\n#          Provisioning_get_nodes_from_json (from custom_notes.json)   #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
     provisioning_get_nodes_from_json  # get nodes from local JSON file
-    printf "\n##############################################\n#                                            #\n#          install_python_packages (from cog)                       #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
+    printf "\n##############################################\n#                                            #\n#          install_python_packages (from cog)                          #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
     provisioning_install_python_packages
     # printf "Getting Stable Diffusion checkpoint models..."
     # provisioning_get_models \
@@ -141,7 +141,7 @@ function provisioning_start() {
     # provisioning_get_models \
     #     "${WORKSPACE}/storage/stable_diffusion/models/instantid" \
     #     "${INSTANTID_MODELS[@]}"
-    printf "Launching install from workflow script..."
+    printf "\n##############################################\n#                                            #\n#          launching installFromWorkflow script (installs custom nodes)#\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
     install_from_workflow
     provisioning_print_end
     printf "Provisioning complete."
