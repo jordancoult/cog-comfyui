@@ -112,11 +112,11 @@ function provisioning_start() {
     DISK_GB_USED=$(($(df --output=used -m "${WORKSPACE}" | tail -n1) / 1000))
     DISK_GB_ALLOCATED=$(($DISK_GB_AVAILABLE + $DISK_GB_USED))
     provisioning_print_header
-    printf "Getting nodes..."
+    printf "\n##############################################\n#                                            #\n#          Provisioning_get_nodes                                   #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
     provisioning_get_nodes  # get nodes listed above
-    printf "Getting nodes from JSON..."
+    printf "\n##############################################\n#                                            #\n#          Provisioning_get_nodes_from_json (from custom_notes.json)#\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
     provisioning_get_nodes_from_json  # get nodes from local JSON file
-    printf "Installing Python packages..."
+    printf "\n##############################################\n#                                            #\n#          install_python_packages (from cog)                       #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
     provisioning_install_python_packages
     # printf "Getting Stable Diffusion checkpoint models..."
     # provisioning_get_models \
@@ -150,7 +150,7 @@ function provisioning_start() {
 function install_from_workflow() {
     # Download WORKFLOW_API_URL to a local file
     local workflow_file="downloaded_workflow_api.json"
-    provisioning_download "${WORKFLOW_API_URL}" "${WORKSPACE}" "${workflow_file}"
+    provisioning_download "${WORKFLOW_API_URL}" "${WORKSPACE}"/"${workflow_file}"
     # Run local python file installFromWorkflow.py workflow.json
     micromamba -n comfyui run python3 $WORKSPACE/$REPO_NAME/installFromWorkflow.py $WORKSPACE/$workflow_file
 }
@@ -244,7 +244,7 @@ function provisioning_print_header() {
 
 function provisioning_print_end() {
     printf "To prepare comfy for a new workflow manually, run the following commands, but replace the last arg with your file:\n"
-    printf "micromamba -n comfyui run python3 $WORKSPACE/$REPO_NAME/installFromWorkflow.py $WORKSPACE/$workflow_file"
+    printf "micromamba -n comfyui run python3 $WORKSPACE/$REPO_NAME/installFromWorkflow.py $WORKSPACE/filename.json"
     printf "\nProvisioning complete:  Web UI will start now\n\n"
 }
 
