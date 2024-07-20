@@ -15,8 +15,8 @@ fi
 if ! command -v yq &> /dev/null
 then
     echo "yq could not be found, installing..."
-    wget https://github.com/mikefarah/yq/releases/download/v4.30.8/yq_linux_amd64 -O /usr/local/bin/yq
-    chmod +x /usr/local/bin/yq
+    sudo wget https://github.com/mikefarah/yq/releases/download/v4.30.8/yq_linux_amd64 -O /usr/local/bin/yq
+    sudo chmod +x /usr/local/bin/yq
 fi
 
 # Install other required Ubuntu packages into micromamba env
@@ -212,6 +212,7 @@ function provisioning_get_nodes() {
 }
 
 function provisioning_install_python_packages() {
+    echo "Number of Python packages to install: ${#PYTHON_PACKAGES[@]}"
     if [ ${#PYTHON_PACKAGES[@]} -gt 0 ]; then
         micromamba -n comfyui run ${PIP_INSTALL} ${PYTHON_PACKAGES[*]}
     fi
