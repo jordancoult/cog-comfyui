@@ -212,7 +212,8 @@ function provisioning_get_nodes() {
 }
 
 function provisioning_install_python_packages() {
-    echo "Number of Python packages to install: ${#PYTHON_PACKAGES[@]}"
+    IFS=' ' read -r -a temp_array <<< "$PYTHON_PACKAGES"
+    echo "Number of Python packages to install: ${#temp_array[@]}"
     if [ ${#PYTHON_PACKAGES[@]} -gt 0 ]; then
         micromamba -n comfyui run ${PIP_INSTALL} ${PYTHON_PACKAGES[*]}
     fi
