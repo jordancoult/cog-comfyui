@@ -1,3 +1,5 @@
+# Author: Jordan C
+
 # Install packages for cog parsing
 if ! command -v jq &> /dev/null
 then
