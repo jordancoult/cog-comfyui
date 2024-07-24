@@ -59,6 +59,8 @@ PYTHON_PACKAGES="$PYTHON_PACKAGES apex"
 
 NODES=(
     "https://github.com/ltdrdata/ComfyUI-Manager"
+    "https://github.com/cubiq/ComfyUI_IPAdapter_plus"
+    "https://github.com/ssitu/ComfyUI_UltimateSDUpscale"
 )
 # Nodes specified in custom_nodes.json will also be installed
 
