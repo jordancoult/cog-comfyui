@@ -32,6 +32,12 @@ sudo curl -o /usr/local/bin/pget -L "https://github.com/replicate/pget/releases/
 sudo apt update
 sudo apt install -y ffmpeg
 
+CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/custom_nodes.json"
+WORKFLOW_API_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/workflow_api.json"
+COG_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/cog.yaml"
+# Download custom cog.yaml
+wget $COG_URL -O $WORKSPACE/$REPO_NAME/cog.yaml
+
 # cog.yaml:python_packages
 # Get python packages from cog.yaml (will install later)
 PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' $WORKSPACE/$REPO_NAME/cog.yaml)
@@ -55,10 +61,6 @@ NODES=(
     "https://github.com/ltdrdata/ComfyUI-Manager"
 )
 # Nodes specified in custom_nodes.json will also be installed
-
-WORKFLOW_API_URL="https://raw.githubusercontent.com/fofr/cog-consistent-character/main/workflow_api.json"
-WORKFLOW_UI_URL="https://raw.githubusercontent.com/fofr/cog-consistent-character/main/workflow_ui.json"
-
 
 CHECKPOINT_MODELS=(
     #"https://huggingface.co/Lykon/dreamshaper-xl-lightning/resolve/main/DreamShaperXL_Lightning.safetensors"
@@ -122,8 +124,8 @@ function provisioning_start() {
     provisioning_print_header
     printf "\n##############################################\n#                                            #\n#          Provisioning_get_nodes                                      #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
     provisioning_get_nodes  # get nodes listed above
-    printf "\n##############################################\n#                                            #\n#          Provisioning_get_nodes_from_json (from custom_nodes.json)   #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
-    provisioning_get_nodes_from_json  # get nodes from local JSON file
+    printf "\n##############################################\n#                                            #\n#          Provisioning_get_nodes_from_json (from specified custom_nodes.json)   #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
+    provisioning_get_nodes_from_json  # get nodes from specified JSON file
     printf "\n##############################################\n#                                            #\n#          install_python_packages (from cog)                          #\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
     provisioning_install_python_packages
     # printf "Getting Stable Diffusion checkpoint models..."
@@ -159,19 +161,21 @@ function install_from_workflow() {
     # Download WORKFLOW_API_URL to a local file
     provisioning_download "${WORKFLOW_API_URL}" "${WORKSPACE}"
     local workflow_name=$(basename "${WORKFLOW_API_URL}")
-    # rename to downloaded_workflow.json
-    mv "${WORKSPACE}/${workflow_name}" "${WORKSPACE}/downloaded_workflow.json"
+    # rename to cons_char_workflow_api.json
+    mv "${WORKSPACE}/${workflow_name}" "${WORKSPACE}/cons_char_workflow_api.json"
     # Change directory to $WORKSPACE/$REPO_NAME
     cd "${WORKSPACE}/${REPO_NAME}"
     # Run local python file installFromWorkflow.py workflow.json
-    sudo python3 installFromWorkflow.py ${WORKSPACE}/downloaded_workflow.json
+    sudo python3 installFromWorkflow.py ${WORKSPACE}/cons_char_workflow_api.json
     # Optionally, change back to the previous directory if needed
     cd -
 }
 
 function provisioning_get_nodes_from_json() {
+    # download consistent-character-custom_nodes
+    wget $CUSTOM_NODES_URL -O "$WORKSPACE/cons_char_custom_nodes.json"
     # Use cat to read the JSON content from a file into a variable
-    local json_content=$(cat "$WORKSPACE/$REPO_NAME/custom_nodes.json")  # todo: the reseource doesnt exist yet
+    local json_content=$(cat "$WORKSPACE/cons_char_custom_nodes.json")
 
     # Parse the JSON content directly from the variable
     local repos=$(printf "$json_content" | jq -c '.[]')
@@ -268,8 +272,6 @@ function provisioning_print_end() {
 function provisioning_download() {
     wget -qnc --content-disposition --show-progress -e dotbytes="${3:-4M}" -P "$2" "$1"
 }
-
-# todo: add import consistent char of workflow to this script
 
 printf "Starting provisioning..."
 provisioning_start
