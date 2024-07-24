@@ -26,7 +26,7 @@ git clone -b develop https://github.com/jordancoult/$REPO_NAME.git "$WORKSPACE/$
 # cog.yaml:run (manual retrofit)
 micromamba -n comfyui run ${PIP_INSTALL} onnxruntime-gpu --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
 # pget (used by installFromWorkflow.py, which runs outside micromamba env)
-sudo curl -o /usr/local/bin/pget -L "https://github.com/replicate/pget/releases/download/v0.8.1/pget_linux_x86_64" && chmod +x /usr/local/bin/pget
+sudo curl -o /usr/local/bin/pget -L "https://github.com/replicate/pget/releases/download/v0.8.1/pget_linux_x86_64" && sudo chmod +x /usr/local/bin/pget && echo "pget installed successfully!"
 
 # cog.yaml:system_packages
 sudo apt update
