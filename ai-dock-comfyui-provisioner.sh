@@ -164,7 +164,7 @@ function install_from_workflow() {
     # Change directory to $WORKSPACE/$REPO_NAME
     cd "${WORKSPACE}/${REPO_NAME}"
     # Run local python file installFromWorkflow.py workflow.json
-    sudo installFromWorkflow.py ${WORKSPACE}/downloaded_workflow.json
+    sudo python3 installFromWorkflow.py ${WORKSPACE}/downloaded_workflow.json
     # Optionally, change back to the previous directory if needed
     cd -
 }
