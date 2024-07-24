@@ -7,6 +7,7 @@
 # Packages are installed after nodes so we can fix them...
 
 WORKFLOW_API_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/workflow_api.json"
+CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/custom_nodes.json"
 
 # Clone the ComfyUI repo
 export REPO_NAME="cog-comfyui"
@@ -71,6 +72,7 @@ function provisioning_start() {
     DISK_GB_ALLOCATED=$(($DISK_GB_AVAILABLE + $DISK_GB_USED))
     provisioning_print_header
     provisioning_get_nodes
+    provisioning_get_nodes_from_json
     provisioning_install_python_packages
     # provisioning_get_models \
     #     "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
@@ -110,6 +112,39 @@ function provisioning_get_nodes() {
             git clone "${repo}" "${path}" --recursive
             if [[ -e $requirements ]]; then
                 micromamba -n comfyui run ${PIP_INSTALL} -r "${requirements}"
+            fi
+        fi
+    done
+}
+
+function provisioning_get_nodes_from_json() {
+    # download consistent-character-custom_nodes
+    wget $CUSTOM_NODES_URL -O "$WORKSPACE/cons_char_custom_nodes.json"
+    # Use cat to read the JSON content from a file into a variable
+    local json_content=$(cat "$WORKSPACE/cons_char_custom_nodes.json")
+
+    # Parse the JSON content directly from the variable
+    local repos=$(printf "$json_content" | jq -c '.[]')
+
+    for row in $repos; do
+        local repo=$(printf $row | jq -r '.repo')
+        local commit=$(printf $row | jq -r '.commit')
+        local dir="${repo##*/}"
+        local path="/opt/ComfyUI/custom_nodes/${dir}"
+        local requirements="${path}/requirements.txt"
+
+        if [[ -d $path ]]; then
+            printf "Updating node: $repo..."
+            (cd "$path" && git fetch && git checkout "$commit")
+            if [[ -e $requirements ]]; then
+                micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
+            fi
+        else
+            printf "Downloading node: $repo..."
+            git clone "$repo" "$path" --recursive
+            (cd "$path" && git checkout "$commit")
+            if [[ -e $requirements ]]; then
+                micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
             fi
         fi
     done
