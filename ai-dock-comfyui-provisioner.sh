@@ -19,17 +19,25 @@ then
     sudo chmod +x /usr/local/bin/yq
 fi
 
-# Install other required Ubuntu packages into micromamba env
-# Replicate/pget
-sudo curl -o /opt/micromamba/envs/comfyui/bin/pget -L "https://github.com/replicate/pget/releases/latest/download/pget_$(uname -s)_$(uname -m)"
-sudo chmod +x /opt/micromamba/envs/comfyui/bin/pget
-
-# Clone the ComfyUI repo (credential expires in September 2024)
+# Clone the ComfyUI repo
 export REPO_NAME="cog-comfyui"
 git clone -b develop https://github.com/jordancoult/$REPO_NAME.git "$WORKSPACE/$REPO_NAME"
 
-# Get python packages from cog.yaml
+# cog.yaml:run (manual retrofit)
+micromamba -n comfyui run ${PIP_INSTALL} onnxruntime-gpu --extra-index-url https://aiinfra.pkgs.visualstudio.com/PublicPackages/_packaging/onnxruntime-cuda-12/pypi/simple/
+# pget (used by installFromWorkflow.py, which runs outside micromamba env)
+sudo curl -o /usr/local/bin/pget -L "https://github.com/replicate/pget/releases/download/v0.8.1/pget_linux_x86_64" && chmod +x /usr/local/bin/pget
+
+# cog.yaml:system_packages
+sudo apt update
+sudo apt install -y ffmpeg
+
+# cog.yaml:python_packages
+# Get python packages from cog.yaml (will install later)
 PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' $WORKSPACE/$REPO_NAME/cog.yaml)
+
+# Append additional packages
+PYTHON_PACKAGES="$PYTHON_PACKAGES apex"
 
 # # Set specific python version from cog.yaml
 # PYTHON_VERSION=$(yq e '.build.python_version' -o=json cog.yaml | jq -r '.')
@@ -156,7 +164,7 @@ function install_from_workflow() {
     # Change directory to $WORKSPACE/$REPO_NAME
     cd "${WORKSPACE}/${REPO_NAME}"
     # Run local python file installFromWorkflow.py workflow.json
-    micromamba -n comfyui run python3 installFromWorkflow.py ${WORKSPACE}/downloaded_workflow.json
+    sudo installFromWorkflow.py ${WORKSPACE}/downloaded_workflow.json
     # Optionally, change back to the previous directory if needed
     cd -
 }

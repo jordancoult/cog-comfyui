@@ -13,7 +13,10 @@ then
     sudo chmod +x /usr/local/bin/yq
 fi
 
+# Get python packages from cog.yaml
 PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' cog.yaml)
+# Append additional packages
+PYTHON_PACKAGES="$PYTHON_PACKAGES apex"
 
 IFS=' ' read -r -a temp_array <<< "$PYTHON_PACKAGES"
 echo "Number of Python packages to install: ${#temp_array[@]}"
