@@ -36,8 +36,10 @@ sudo apt install -y ffmpeg
 # Get python packages from cog.yaml (will install later)
 PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' $WORKSPACE/$REPO_NAME/cog.yaml)
 
+# Remove the package "onnx" from the list
+PYTHON_PACKAGES=$(echo "$PYTHON_PACKAGES" | sed -e 's/\bonnx\b//g' -e 's/^ *//;s/ *$//;s/  */ /g')
 # Append additional packages
-PYTHON_PACKAGES="$PYTHON_PACKAGES apex"
+# PYTHON_PACKAGES="$PYTHON_PACKAGES apex"
 
 # # Set specific python version from cog.yaml
 # PYTHON_VERSION=$(yq e '.build.python_version' -o=json cog.yaml | jq -r '.')
