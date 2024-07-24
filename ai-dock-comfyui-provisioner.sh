@@ -8,6 +8,7 @@
 
 WORKFLOW_API_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/workflow_api.json"
 CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/custom_nodes.json"
+COG_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/cog.yaml"
 
 # Clone the ComfyUI repo
 export REPO_NAME="cog-comfyui"
@@ -16,6 +17,7 @@ git clone -b develop https://github.com/jordancoult/$REPO_NAME.git "$WORKSPACE/$
 PYTHON_PACKAGES=(
     "ultralytics!=8.0.177"
 )
+# packages in cog appended to this
 
 NODES=(
     "https://github.com/ltdrdata/ComfyUI-Manager"
@@ -72,7 +74,7 @@ function provisioning_start() {
     DISK_GB_ALLOCATED=$(($DISK_GB_AVAILABLE + $DISK_GB_USED))
     provisioning_print_header
     provisioning_get_nodes
-    provisioning_get_nodes_from_json
+    # provisioning_get_nodes_from_json  # this broke comfyUI
     provisioning_install_python_packages
     # provisioning_get_models \
     #     "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
@@ -151,6 +153,13 @@ function provisioning_get_nodes_from_json() {
 }
 
 function provisioning_install_python_packages() {
+    # First, append cog packages
+    wget $COG_URL -O $WORKSPACE/downloaded_cog.yaml
+    COG_PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' $WORKSPACE/downloaded_cog.yaml)
+    PYTHON_PACKAGES="$PYTHON_PACKAGES $COG_PYTHON_PACKAGES"
+    # Install Python packages
+    IFS=' ' read -r -a temp_array <<< "$PYTHON_PACKAGES"
+    echo "Number of Python packages to install: ${#temp_array[@]}"
     if [ ${#PYTHON_PACKAGES[@]} -gt 0 ]; then
         micromamba -n comfyui run ${PIP_INSTALL} ${PYTHON_PACKAGES[*]}
     fi
