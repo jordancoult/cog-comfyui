@@ -8,6 +8,10 @@
 
 WORKFLOW_API_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/workflow_api.json"
 
+# Clone the ComfyUI repo
+export REPO_NAME="cog-comfyui"
+git clone -b develop https://github.com/jordancoult/$REPO_NAME.git "$WORKSPACE/$REPO_NAME"
+
 PYTHON_PACKAGES=(
     "ultralytics!=8.0.177"
 )
