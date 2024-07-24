@@ -40,10 +40,12 @@ wget $COG_URL -O $WORKSPACE/$REPO_NAME/cog.yaml
 
 # cog.yaml:python_packages
 # Get python packages from cog.yaml (will install later)
-PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' $WORKSPACE/$REPO_NAME/cog.yaml)
+# PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' $WORKSPACE/$REPO_NAME/cog.yaml)
 
 # Append additional packages
-PYTHON_PACKAGES="$PYTHON_PACKAGES apex"
+# PYTHON_PACKAGES="$PYTHON_PACKAGES apex"
+
+PYTHON_PACKAGES="ultralytics!=8.0.177"
 
 # # Set specific python version from cog.yaml
 # PYTHON_VERSION=$(yq e '.build.python_version' -o=json cog.yaml | jq -r '.')
