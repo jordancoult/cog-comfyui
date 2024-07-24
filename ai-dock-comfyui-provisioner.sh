@@ -153,8 +153,12 @@ function install_from_workflow() {
     local workflow_name=$(basename "${WORKFLOW_API_URL}")
     # rename to downloaded_workflow.json
     mv "${WORKSPACE}/${workflow_name}" "${WORKSPACE}/downloaded_workflow.json"
+    # Change directory to $WORKSPACE/$REPO_NAME
+    cd "${WORKSPACE}/${REPO_NAME}"
     # Run local python file installFromWorkflow.py workflow.json
-    micromamba -n comfyui run python3 $WORKSPACE/$REPO_NAME/installFromWorkflow.py $WORKSPACE/downloaded_workflow.json
+    micromamba -n comfyui run python3 installFromWorkflow.py ${WORKSPACE}/downloaded_workflow.json
+    # Optionally, change back to the previous directory if needed
+    cd -
 }
 
 function provisioning_get_nodes_from_json() {
