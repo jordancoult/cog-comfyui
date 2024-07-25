@@ -19,8 +19,19 @@ PYTHON_PACKAGES=(
 )
 # packages in cog appended to this
 
+# Nodes are manually set with those specified in consistent-character (disregarding commits)
 NODES=(
-    "https://github.com/ltdrdata/ComfyUI-Manager"
+    "https://github.com/cubiq/ComfyUI_IPAdapter_plus"
+    "https://github.com/Fannovel16/comfyui_controlnet_aux"
+    "https://github.com/cubiq/ComfyUI_essentials"
+    "https://github.com/cubiq/ComfyUI_InstantID"
+    "https://github.com/ZHO-ZHO-ZHO/ComfyUI-BRIA_AI-RMBG"
+    "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes"
+    "https://github.com/huchenlei/ComfyUI-layerdiffuse"
+    "https://github.com/kijai/ComfyUI-KJNodes"
+    "https://github.com/huchenlei/ComfyUI-IC-Light-Native"
+    "https://github.com/fofr/ComfyUI-Impact-Pack"
+    "https://github.com/WASasquatch/was-node-suite-comfyui"
 )
 
 CHECKPOINT_MODELS=(
