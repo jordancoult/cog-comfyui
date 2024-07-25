@@ -21,6 +21,7 @@ PYTHON_PACKAGES=(
 
 # Nodes are manually set with those specified in consistent-character (disregarding commits)
 NODES=(
+    "https://github.com/ltdrdata/ComfyUI-Manager"
     "https://github.com/cubiq/ComfyUI_IPAdapter_plus"
     "https://github.com/Fannovel16/comfyui_controlnet_aux"
     "https://github.com/cubiq/ComfyUI_essentials"
@@ -35,7 +36,7 @@ NODES=(
 )
 
 CHECKPOINT_MODELS=(
-    "https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt"
+    #"https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.ckpt"
     #"https://huggingface.co/stabilityai/stable-diffusion-2-1/resolve/main/v2-1_768-ema-pruned.ckpt"
     #"https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors"
     #"https://huggingface.co/stabilityai/stable-diffusion-xl-refiner-1.0/resolve/main/sd_xl_refiner_1.0.safetensors"
@@ -87,9 +88,9 @@ function provisioning_start() {
     provisioning_get_nodes
     # provisioning_get_nodes_from_json  # this broke comfyUI
     provisioning_install_python_packages
-    # provisioning_get_models \
-    #     "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
-    #     "${CHECKPOINT_MODELS[@]}"
+    provisioning_get_models \
+        "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
+        "${CHECKPOINT_MODELS[@]}"
     # provisioning_get_models \
     #     "${WORKSPACE}/storage/stable_diffusion/models/lora" \
     #     "${LORA_MODELS[@]}"
@@ -164,7 +165,19 @@ function provisioning_get_nodes_from_json() {
 }
 
 function provisioning_install_python_packages() {
-    # First, append cog packages
+    # Install what we need to parse cog packages
+    if ! command -v jq &> /dev/null
+    then
+        echo "jq could not be found, installing..."
+        sudo apt-get update && sudo apt-get install -y jq
+    fi
+    if ! command -v yq &> /dev/null
+    then
+        echo "yq could not be found, installing..."
+        sudo wget https://github.com/mikefarah/yq/releases/download/v4.30.8/yq_linux_amd64 -O /usr/local/bin/yq
+        sudo chmod +x /usr/local/bin/yq
+    fi
+    # Append cog packages to already defined python packages
     wget $COG_URL -O $WORKSPACE/downloaded_cog.yaml
     COG_PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' $WORKSPACE/downloaded_cog.yaml)
     PYTHON_PACKAGES="$PYTHON_PACKAGES $COG_PYTHON_PACKAGES"
