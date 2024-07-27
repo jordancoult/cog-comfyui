@@ -2,12 +2,28 @@
 
 # This file will be sourced in init.sh
 
+# Download link for this file:
 # https://raw.githubusercontent.com/jordancoult/cog-comfyui/develop/ai-dock-comfyui-provisioner.sh
 
-# Packages are installed after nodes so we can fix them...
+# List of models available to fofr workflow auto-download stuff
+# https://github.com/fofr/cog-comfyui/blob/main/supported_weights.md
+
+# Install what we need to parse files
+if ! command -v jq &> /dev/null
+then
+    echo "jq could not be found, installing..."
+    sudo apt-get update && sudo apt-get install -y jq
+fi
+if ! command -v yq &> /dev/null
+then
+    echo "yq could not be found, installing..."
+    sudo wget https://github.com/mikefarah/yq/releases/download/v4.30.8/yq_linux_amd64 -O /usr/local/bin/yq
+    sudo chmod +x /usr/local/bin/yq
+fi
 
 WORKFLOW_API_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/workflow_api.json"
-CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/custom_nodes.json"
+# CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/custom_nodes.json"
+CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-comfyui/main/custom_nodes.json"
 COG_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/cog.yaml"
 
 # Clone the ComfyUI repo
@@ -22,17 +38,17 @@ PYTHON_PACKAGES=(
 # Nodes are manually set with those specified in consistent-character (disregarding commits)
 NODES=(
     "https://github.com/ltdrdata/ComfyUI-Manager"
-    "https://github.com/cubiq/ComfyUI_IPAdapter_plus"
-    "https://github.com/Fannovel16/comfyui_controlnet_aux"
-    "https://github.com/cubiq/ComfyUI_essentials"
-    "https://github.com/cubiq/ComfyUI_InstantID"
-    "https://github.com/ZHO-ZHO-ZHO/ComfyUI-BRIA_AI-RMBG"
-    "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes"
-    "https://github.com/huchenlei/ComfyUI-layerdiffuse"
-    "https://github.com/kijai/ComfyUI-KJNodes"
-    "https://github.com/huchenlei/ComfyUI-IC-Light-Native"
-    "https://github.com/fofr/ComfyUI-Impact-Pack"
-    "https://github.com/WASasquatch/was-node-suite-comfyui"
+    # "https://github.com/cubiq/ComfyUI_IPAdapter_plus"
+    # "https://github.com/Fannovel16/comfyui_controlnet_aux"
+    # "https://github.com/cubiq/ComfyUI_essentials"
+    # "https://github.com/cubiq/ComfyUI_InstantID"
+    # "https://github.com/ZHO-ZHO-ZHO/ComfyUI-BRIA_AI-RMBG"
+    # "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes"
+    # "https://github.com/huchenlei/ComfyUI-layerdiffuse"
+    # "https://github.com/kijai/ComfyUI-KJNodes"
+    # "https://github.com/huchenlei/ComfyUI-IC-Light-Native"
+    # "https://github.com/fofr/ComfyUI-Impact-Pack"
+    # "https://github.com/WASasquatch/was-node-suite-comfyui"
 )
 
 CHECKPOINT_MODELS=(
@@ -86,7 +102,7 @@ function provisioning_start() {
     DISK_GB_ALLOCATED=$(($DISK_GB_AVAILABLE + $DISK_GB_USED))
     provisioning_print_header
     provisioning_get_nodes
-    # provisioning_get_nodes_from_json  # this broke comfyUI
+    provisioning_get_nodes_from_json  # this broke comfyUI
     provisioning_install_python_packages
     provisioning_get_models \
         "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
@@ -132,51 +148,36 @@ function provisioning_get_nodes() {
 }
 
 function provisioning_get_nodes_from_json() {
-    # download consistent-character-custom_nodes
-    wget $CUSTOM_NODES_URL -O "$WORKSPACE/cons_char_custom_nodes.json"
-    # Use cat to read the JSON content from a file into a variable
-    local json_content=$(cat "$WORKSPACE/cons_char_custom_nodes.json")
+    # Download the custom nodes JSON file
+    wget $CUSTOM_NODES_URL -O "$WORKSPACE/custom_nodes.json"
+    # Read the JSON content from the file into a variable
+    local json_content=$(cat "$WORKSPACE/custom_nodes.json")
+    # Parse the JSON content to extract the repo URLs
+    local repos=$(echo "$json_content" | jq -r '.[].repo')
 
-    # Parse the JSON content directly from the variable
-    local repos=$(printf "$json_content" | jq -c '.[]')
-
-    for row in $repos; do
-        local repo=$(printf $row | jq -r '.repo')
-        local commit=$(printf $row | jq -r '.commit')
-        local dir="${repo##*/}"
-        local path="/opt/ComfyUI/custom_nodes/${dir}"
-        local requirements="${path}/requirements.txt"
-
+    for repo in $repos; do
+        dir="${repo##*/}"
+        path="/opt/ComfyUI/custom_nodes/${dir}"
+        requirements="${path}/requirements.txt"
         if [[ -d $path ]]; then
-            printf "Updating node: $repo..."
-            (cd "$path" && git fetch && git checkout "$commit")
-            if [[ -e $requirements ]]; then
-                micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
+            if [[ ${AUTO_UPDATE,,} != "false" ]]; then
+                printf "Updating node: %s...\n" "${repo}"
+                ( cd "$path" && git pull )
+                if [[ -e $requirements ]]; then
+                    micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
+                fi
             fi
         else
-            printf "Downloading node: $repo..."
-            git clone "$repo" "$path" --recursive
-            (cd "$path" && git checkout "$commit")
+            printf "Downloading node: %s...\n" "${repo}"
+            git clone "${repo}" "${path}" --recursive
             if [[ -e $requirements ]]; then
-                micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
+                micromamba -n comfyui run ${PIP_INSTALL} -r "${requirements}"
             fi
         fi
     done
 }
 
 function provisioning_install_python_packages() {
-    # Install what we need to parse cog packages
-    if ! command -v jq &> /dev/null
-    then
-        echo "jq could not be found, installing..."
-        sudo apt-get update && sudo apt-get install -y jq
-    fi
-    if ! command -v yq &> /dev/null
-    then
-        echo "yq could not be found, installing..."
-        sudo wget https://github.com/mikefarah/yq/releases/download/v4.30.8/yq_linux_amd64 -O /usr/local/bin/yq
-        sudo chmod +x /usr/local/bin/yq
-    fi
     # Append cog packages to already defined python packages
     wget $COG_URL -O $WORKSPACE/downloaded_cog.yaml
     COG_PYTHON_PACKAGES=$(yq -r '.build.python_packages | join(" ")' $WORKSPACE/downloaded_cog.yaml)
