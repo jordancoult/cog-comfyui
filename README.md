@@ -1,5 +1,12 @@
 # cog-comfyui
 
+Custom files in this fork:
+
+- ai-dock-comfyui-provisioner.sh - set this as the provisioning script to prepare your pod with python packages from cog.yaml, custom nodes from custom_nodes.json, and weights installed as gleaned from workflow.
+- installFromWorkflow.py - run this script with a workflow as arg, and all models used in the workflow will be installed
+- downloadWeights.py - A script that can be used after provisioning to download any number of weights passed in as args. Choose from list in ./supported_weights.md. This list is often updated, so rebase to upstream to get latest options.
+- install_cog_packages.sh - convenience script to install python packages listed in cog.yaml
+
 Run ComfyUI workflows on Replicate:
 
 https://replicate.com/fofr/any-comfyui-workflow
@@ -179,18 +186,21 @@ You can view the list of nodes in [custom_nodes.json](https://github.com/fofr/co
 ### Running the Web UI from your Cog container
 
 1. **GPU Machine**: Start the Cog container and expose port 8188:
+
 ```sh
 sudo cog run -p 8188 bash
 ```
+
 Running this command starts up the Cog container and let's you access it
 
 2. **Inside Cog Container**: Now that we have access to the Cog container, we start the server, binding to all network interfaces:
+
 ```sh
 cd ComfyUI/
 python main.py --listen 0.0.0.0
 ```
 
 3. **Local Machine**: Access the server using the GPU machine's IP and the exposed port (8188):
-`http://<gpu-machines-ip>:8188`
+   `http://<gpu-machines-ip>:8188`
 
 When you goto `http://<gpu-machines-ip>:8188` you'll see the classic ComfyUI web form!
