@@ -3,7 +3,7 @@
 Custom files in this fork:
 
 - ai-dock-comfyui-provisioner.sh - set this as the provisioning script to prepare your pod with python packages from cog.yaml, custom nodes from custom_nodes.json, and weights installed as gleaned from workflow.
-- installFromWorkflow.py - run this script with a workflow as arg, and all models used in the workflow will be installed
+- installFromWorkflow.py - If you want to re-install from a workflow after provisioning, run this script with a workflow as arg, and all models used in the workflow will be installed if they don't already exist
 - downloadWeights.py - A script that can be used after provisioning to download any number of weights passed in as args. Choose from list in ./supported_weights.md. This list is often updated, so rebase to upstream to get latest options.
 - install_cog_packages.sh - convenience script to install python packages listed in cog.yaml
 
