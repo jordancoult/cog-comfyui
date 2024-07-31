@@ -21,10 +21,10 @@ then
     sudo chmod +x /usr/local/bin/yq
 fi
 
-WORKFLOW_API_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/workflow_api.json"
-# CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/custom_nodes.json"
+WORKFLOW_API_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/workflow_api.json"
+# CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/custom_nodes.json"
 CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-comfyui/main/custom_nodes.json"
-COG_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/main/cog.yaml"
+COG_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/cog.yaml"
 
 # Clone the ComfyUI repo
 export REPO_NAME="cog-comfyui"
