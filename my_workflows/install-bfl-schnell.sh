@@ -19,10 +19,10 @@ else
     echo "pget is already installed."
 fi
 
-# Download the model
-pget "$MODEL" "$BASE_PATH/unet/$(basename "$MODEL")"
+# VAE
+pget "$VAE" "$BASE_PATH/vae/ae.safetensors"
 # Text encoders
 pget "$CLIP" "$BASE_PATH/clip/$(basename "$CLIP")"
 pget "$TEXT_ENC" "$BASE_PATH/clip/$(basename "$TEXT_ENC")"
-# VAE
-pget "$VAE" "$BASE_PATH/vae/$(basename "$VAE")"
+# Download the model
+pget "$MODEL" "$BASE_PATH/unet/flux1-schnell.safetensors"
