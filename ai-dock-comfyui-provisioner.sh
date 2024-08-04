@@ -23,7 +23,7 @@ fi
 
 WORKFLOW_API_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/workflow_api.json"
 # CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/custom_nodes.json"
-CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-comfyui/main/custom_nodes.json"
+CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-comfyui/develop/custom_nodes.json"
 COG_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/cog.yaml"
 
 # Clone the ComfyUI repo
