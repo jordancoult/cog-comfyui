@@ -10,19 +10,10 @@ TEXT_ENC=https://huggingface.co/comfyanonymous/flux_text_encoders/resolve/main/t
 VAE=https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/ae.sft
 MODEL=https://huggingface.co/black-forest-labs/FLUX.1-schnell/resolve/main/flux1-schnell.sft
 
-# Check if pget is already installed
-if ! command -v pget &> /dev/null
-then
-    # Install pget
-    sudo curl -o /usr/local/bin/pget -L "https://github.com/replicate/pget/releases/download/v0.8.1/pget_linux_x86_64" && sudo chmod +x /usr/local/bin/pget && echo "pget installed successfully!"
-else
-    echo "pget is already installed."
-fi
-
 # VAE
-pget "$VAE" "$BASE_PATH/vae/ae.safetensors"
+wget "$VAE" -O "$BASE_PATH/vae/ae.safetensors"
 # Text encoders
-pget "$CLIP" "$BASE_PATH/clip/$(basename "$CLIP")"
-pget "$TEXT_ENC" "$BASE_PATH/clip/$(basename "$TEXT_ENC")"
+wget "$CLIP" -O "$BASE_PATH/clip/$(basename "$CLIP")"
+wget "$TEXT_ENC" -O "$BASE_PATH/clip/$(basename "$TEXT_ENC")"
 # Download the model
-pget "$MODEL" "$BASE_PATH/unet/flux1-schnell.safetensors"
+wget "$MODEL" -O "$BASE_PATH/unet/flux1-schnell.safetensors"
