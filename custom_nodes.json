@@ -171,5 +171,13 @@
   {
     "repo": "https://github.com/nullquant/ComfyUI-BrushNet",
     "commit": "dbd64b4"
+  },
+  {
+    "repo": "https://github.com/comfyanonymous/ComfyUI_experiments",
+    "commit": ""
+  },
+  {
+    "repo": "https://github.com/WASasquatch/was-node-suite-comfyui",
+    "commit": ""
   }
 ]
