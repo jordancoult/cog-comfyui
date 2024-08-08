@@ -179,5 +179,9 @@
   {
     "repo": "https://github.com/WASasquatch/was-node-suite-comfyui",
     "commit": ""
+  },
+  {
+    "repo": "https://github.com/replicate/comfyui-replicate",
+    "commit": ""
   }
 ]
