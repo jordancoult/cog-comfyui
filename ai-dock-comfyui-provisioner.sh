@@ -2,6 +2,10 @@
 
 # This file will be sourced in init.sh
 
+# Start with template
+# https://www.runpod.io/console/explore/57we0zdwtt
+# Use with container image:
+# ghcr.io/ai-dock/comfyui@sha256:64d080e59c96164067511b8d60c80ada80e85eed66d3d27e0482bd8ab96fc7de
 # Download link for this file:
 # https://raw.githubusercontent.com/jordancoult/cog-comfyui/develop/ai-dock-comfyui-provisioner.sh
 
