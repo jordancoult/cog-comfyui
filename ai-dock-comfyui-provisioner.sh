@@ -21,6 +21,13 @@ then
     sudo chmod +x /usr/local/bin/yq
 fi
 
+# Check if micromamba is installed and set INSTALL_PREPEND accordingly
+if command -v micromamba >/dev/null 2>&1; then
+    INSTALL_PREPEND="micromamba -n comfyui run "
+else
+    INSTALL_PREPEND=""
+fi
+
 WORKFLOW_API_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/workflow_api.json"
 # CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/custom_nodes.json"
 CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-comfyui/develop/custom_nodes.json"
@@ -125,6 +132,7 @@ function provisioning_start() {
 }
 
 function provisioning_get_nodes() {
+
     for repo in "${NODES[@]}"; do
         dir="${repo##*/}"
         path="/opt/ComfyUI/custom_nodes/${dir}"
@@ -134,14 +142,14 @@ function provisioning_get_nodes() {
                 printf "Updating node: %s...\n" "${repo}"
                 ( cd "$path" && git pull )
                 if [[ -e $requirements ]]; then
-                    micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
+                    ${INSTALL_PREPEND}${PIP_INSTALL} -r "$requirements"
                 fi
             fi
         else
             printf "Downloading node: %s...\n" "${repo}"
             git clone "${repo}" "${path}" --recursive
             if [[ -e $requirements ]]; then
-                micromamba -n comfyui run ${PIP_INSTALL} -r "${requirements}"
+                ${INSTALL_PREPEND}${PIP_INSTALL} -r "${requirements}"
             fi
         fi
     done
@@ -164,14 +172,14 @@ function provisioning_get_nodes_from_json() {
                 printf "Updating node: %s...\n" "${repo}"
                 ( cd "$path" && git pull )
                 if [[ -e $requirements ]]; then
-                    micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
+                    ${INSTALL_PREPEND}${PIP_INSTALL} -r "$requirements"
                 fi
             fi
         else
             printf "Downloading node: %s...\n" "${repo}"
             git clone "${repo}" "${path}" --recursive
             if [[ -e $requirements ]]; then
-                micromamba -n comfyui run ${PIP_INSTALL} -r "${requirements}"
+                ${INSTALL_PREPEND}${PIP_INSTALL} -r "${requirements}"
             fi
         fi
     done
@@ -186,7 +194,7 @@ function provisioning_install_python_packages() {
     IFS=' ' read -r -a temp_array <<< "$PYTHON_PACKAGES"
     echo "Number of Python packages to install: ${#temp_array[@]}"
     if [ ${#PYTHON_PACKAGES[@]} -gt 0 ]; then
-        micromamba -n comfyui run ${PIP_INSTALL} ${PYTHON_PACKAGES[*]}
+        ${INSTALL_PREPEND}${PIP_INSTALL} ${PYTHON_PACKAGES[*]}
     fi
 }
 
