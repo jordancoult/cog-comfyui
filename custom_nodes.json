@@ -174,14 +174,14 @@
   },
   {
     "repo": "https://github.com/comfyanonymous/ComfyUI_experiments",
-    "commit": ""
+    "commit": "934dba9"
   },
   {
     "repo": "https://github.com/WASasquatch/was-node-suite-comfyui",
-    "commit": ""
+    "commit": "ee2e31a"
   },
   {
     "repo": "https://github.com/replicate/comfyui-replicate",
-    "commit": ""
+    "commit": "8a03d8e"
   }
 ]

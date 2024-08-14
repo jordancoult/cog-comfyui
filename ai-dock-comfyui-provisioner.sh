@@ -164,24 +164,30 @@ function provisioning_get_nodes_from_json() {
     wget $CUSTOM_NODES_URL -O "$WORKSPACE/custom_nodes.json"
     # Read the JSON content from the file into a variable
     local json_content=$(cat "$WORKSPACE/custom_nodes.json")
-    # Parse the JSON content to extract the repo URLs
-    local repos=$(echo "$json_content" | jq -r '.[].repo')
+    # Parse the JSON content to extract the repo URLs and commit hashes
+    local repos=$(echo "$json_content" | jq -r '.[] | @base64')
 
-    for repo in $repos; do
+    for encoded_repo in $repos; do
+        _jq() {
+         echo ${encoded_repo} | base64 --decode | jq -r ${1}
+        }
+        repo=$(_jq '.repo')
+        commit_hash=$(_jq '.commit')
         dir="${repo##*/}"
         path="/opt/ComfyUI/custom_nodes/${dir}"
         requirements="${path}/requirements.txt"
         if [[ -d $path ]]; then
             if [[ ${AUTO_UPDATE,,} != "false" ]]; then
-                printf "Updating node: %s...\n" "${repo}"
-                ( cd "$path" && git pull )
+                printf "Updating node: %s to commit %s...\n" "${repo}" "${commit_hash}"
+                ( cd "$path" && git fetch && git checkout "${commit_hash}" )
                 if [[ -e $requirements ]]; then
                     micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
                 fi
             fi
         else
-            printf "Downloading node: %s...\n" "${repo}"
+            printf "Downloading node: %s and checking out %s...\n" "${repo}" "${commit_hash}"
             git clone "${repo}" "${path}" --recursive
+            ( cd "$path" && git checkout "${commit_hash}" )
             if [[ -e $requirements ]]; then
                 micromamba -n comfyui run ${PIP_INSTALL} -r "${requirements}"
             fi
