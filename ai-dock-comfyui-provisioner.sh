@@ -25,10 +25,18 @@ then
     sudo chmod +x /usr/local/bin/yq
 fi
 
-WORKFLOW_API_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/workflow_api.json"
-# CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/custom_nodes.json"
-CUSTOM_NODES_URL="https://raw.githubusercontent.com/jordancoult/cog-comfyui/develop/custom_nodes.json"
-COG_URL="https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/cog.yaml"
+# Function to set environment variable if not already set
+set_env_var_if_not_set() {
+    local var_name=$1
+    local default_value=$2
+    if [ -z ${!var_name+x} ]; then
+        echo "No value set for $var_name, setting to default: $default_value"
+        export $var_name="$default_value"
+    fi
+}
+set_env_var_if_not_set WORKFLOW_API_URL "https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/workflow_api.json"
+set_env_var_if_not_set CUSTOM_NODES_URL "https://raw.githubusercontent.com/jordancoult/cog-comfyui/develop/custom_nodes.json"
+set_env_var_if_not_set COG_URL "https://raw.githubusercontent.com/jordancoult/cog-consistent-character/develop/cog.yaml"
 
 # Clone the ComfyUI repo
 export REPO_NAME="cog-comfyui"
