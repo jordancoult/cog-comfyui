@@ -183,5 +183,9 @@
   {
     "repo": "https://github.com/replicate/comfyui-replicate",
     "commit": ""
+  },
+  {
+    "repo": "https://github.com/jamesWalker55/comfyui-various",
+    "commit": ""
   }
 ]
