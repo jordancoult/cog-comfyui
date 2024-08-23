@@ -1,68 +1,68 @@
 [
   {
     "repo": "https://github.com/cubiq/ComfyUI_IPAdapter_plus",
-    "commit": "78ac59c"
+    "commit": "ce9b621"
   },
   {
     "repo": "https://github.com/Fannovel16/comfyui_controlnet_aux",
-    "commit": "8e51eb3"
+    "commit": "4cd233c"
   },
   {
     "repo": "https://github.com/fofr/ComfyUI-Impact-Pack",
-    "commit": "9ad8f85",
+    "commit": "ab17f88",
     "notes": "Fork of https://github.com/ltdrdata/ComfyUI-Impact-Pack which prevents automatic installation of dependencies"
   },
   {
     "repo": "https://github.com/ltdrdata/ComfyUI-Inspire-Pack",
-    "commit": "9b2d22a"
+    "commit": "b09b295"
   },
   {
     "repo": "https://github.com/theUpsider/ComfyUI-Logic",
-    "commit": "fb88973"
+    "commit": "42d4f3d"
   },
   {
     "repo": "https://github.com/Acly/comfyui-tooling-nodes",
-    "commit": "2f39365"
+    "commit": "d1dcf12"
   },
   {
     "repo": "https://github.com/Kosinkadink/ComfyUI-AnimateDiff-Evolved",
-    "commit": "832e832"
+    "commit": "c5c2780"
   },
   {
     "repo": "https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite",
-    "commit": "0037f49"
+    "commit": "6bffe8b"
   },
   {
     "repo": "https://github.com/Kosinkadink/ComfyUI-Advanced-ControlNet",
-    "commit": "7a456aa"
+    "commit": "1b3cb5f"
   },
   {
     "repo": "https://github.com/jags111/efficiency-nodes-comfyui",
-    "commit": "a5422d6"
+    "commit": "b471390"
   },
   {
     "repo": "https://github.com/Derfuu/Derfuu_ComfyUI_ModdedNodes",
-    "commit": "5c93bd1"
+    "commit": "d0905be"
   },
   {
     "repo": "https://github.com/FizzleDorf/ComfyUI_FizzNodes",
-    "commit": "3db5b71"
+    "commit": "0e30c12"
   },
   {
     "repo": "https://github.com/TinyTerra/ComfyUI_tinyterraNodes",
-    "commit": "732d417"
+    "commit": "52711d5"
   },
   {
     "repo": "https://github.com/ssitu/ComfyUI_UltimateSDUpscale",
-    "commit": "233f8b8"
+    "commit": "70083f5"
   },
   {
     "repo": "https://github.com/cubiq/ComfyUI_essentials",
-    "commit": "5f1fc52"
+    "commit": "635322c"
   },
   {
     "repo": "https://github.com/shiimizu/ComfyUI-PhotoMaker-Plus",
-    "commit": "4c61084"
+    "commit": "10c453a"
   },
   {
     "repo": "https://github.com/pythongosssss/ComfyUI-Custom-Scripts",
