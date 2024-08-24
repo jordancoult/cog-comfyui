@@ -58,6 +58,7 @@ class WeightsDownloader:
         if self.check_if_file_exists(weight_str, dest):
             print(f"✅ {weight_str} exists in {dest}")
             return
+        print(f"Downloading {weight_str} from {url} to {dest}")
         WeightsDownloader.download(weight_str, url, dest)
 
     @staticmethod
