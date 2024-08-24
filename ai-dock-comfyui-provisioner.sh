@@ -115,7 +115,8 @@ function provisioning_start() {
     DISK_GB_ALLOCATED=$(($DISK_GB_AVAILABLE + $DISK_GB_USED))
     provisioning_print_header
     provisioning_get_nodes
-    provisioning_get_nodes_from_json  # this broke comfyUI
+    printf "\n##############################################\n#                                            #\n#          installing from custom_nodes.json#\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
+    provisioning_get_nodes_from_json
     provisioning_install_python_packages
     provisioning_get_models \
         "${WORKSPACE}/storage/stable_diffusion/models/ckpt" \
