@@ -55,5 +55,6 @@ current_indentation = detect_indentation(json_file_path)
 print("Writing updated data back to custom_nodes.json")
 with open(json_file_path, 'w') as file:
   json.dump(nodes, file, indent=current_indentation)
+  file.write('\n')  # Ensure a newline at the end of the file
 
 print("Update complete.")
