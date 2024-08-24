@@ -165,24 +165,36 @@ function provisioning_get_nodes_from_json() {
     wget $CUSTOM_NODES_URL -O "$WORKSPACE/custom_nodes.json"
     # Read the JSON content from the file into a variable
     local json_content=$(cat "$WORKSPACE/custom_nodes.json")
-    # Parse the JSON content to extract the repo URLs
-    local repos=$(echo "$json_content" | jq -r '.[].repo')
+    # Parse the JSON content to extract the repo URLs and commits
+    local nodes=$(echo "$json_content" | jq -c '.[]')
 
-    for repo in $repos; do
+    for node in $nodes; do
+        local repo=$(echo "$node" | jq -r '.repo')
+        local commit=$(echo "$node" | jq -r '.commit')
         dir="${repo##*/}"
         path="/opt/ComfyUI/custom_nodes/${dir}"
         requirements="${path}/requirements.txt"
         if [[ -d $path ]]; then
-            if [[ ${AUTO_UPDATE,,} != "false" ]]; then
-                printf "Updating node: %s...\n" "${repo}"
+            printf "Node already exists: %s. Checking for updates...\n" "${repo}"
+            ( cd "$path" && git fetch )
+            # If commit is not an empty string, checkout to the specified commit
+            if [[ -n $commit && $commit != "null" ]]; then
+                ( cd "$path" && git checkout "$commit" )
+            else
+                # If no commit specified, just pull the latest changes
                 ( cd "$path" && git pull )
-                if [[ -e $requirements ]]; then
-                    micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
-                fi
+            fi
+            if [[ -e $requirements ]]; then
+                printf "Installing requirements for %s...\n" "${dir}"
+                micromamba -n comfyui run ${PIP_INSTALL} -r "$requirements"
             fi
         else
             printf "Downloading node: %s...\n" "${repo}"
             git clone "${repo}" "${path}" --recursive
+            # If commit is not an empty string, checkout to the specified commit
+            if [[ -n $commit && $commit != "null" ]]; then
+                ( cd "$path" && git checkout "$commit" )
+            fi
             if [[ -e $requirements ]]; then
                 micromamba -n comfyui run ${PIP_INSTALL} -r "${requirements}"
             fi
