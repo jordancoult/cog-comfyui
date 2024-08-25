@@ -190,5 +190,13 @@
   {
     "repo": "https://github.com/XLabs-AI/x-flux-comfyui",
     "commit": ""
+  },
+  {
+    "repo": "https://github.com/kijai/ComfyUI-segment-anything-2",
+    "commit": "05496ca"
+  },
+  {
+    "repo": "https://github.com/kijai/ComfyUI-Florence2",
+    "commit": "07b71d4"
   }
 ]
