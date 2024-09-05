@@ -198,5 +198,9 @@
   {
     "repo": "https://github.com/neverbiasu/ComfyUI-SAM2",
     "commit": ""
+  },
+  {
+    "repo": "https://github.com/filliptm/ComfyUI_Fill-Nodes",
+    "commit": ""
   }
 ]
