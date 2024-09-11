@@ -19,13 +19,14 @@ class BoundingBox:
 
     CATEGORY = "Image Processing"
 
+    # In ComfyUI, the data exchanged as IMAGE type is always a 4-dimensional torch.tensor with dimensions (b, h, w, c)
     def find_bounding_box(self, image):
-        # Assuming 'image' is a PyTorch tensor with shape (C, H, W)
-        if image.dim() != 3:
-            raise ValueError("Input image must have 3 dimensions (C, H, W)")
+        # Ensure the image tensor is 4-dimensional and has shape (b, h, w, c)
+        if image.dim() != 4 or image.shape[0] != 1:
+            raise ValueError("Input image must be a 4-dimensional tensor with the first dimension as 1 (b, h, w, c)")
 
-        # Convert to grayscale by summing the channels
-        grayscale = torch.sum(image, dim=0)
+        # Convert to grayscale by averaging the channels, assuming the last dimension is channel
+        grayscale = image.mean(dim=-1).squeeze(0)
 
         # Find non-black pixels (values greater than 0)
         non_black_pixels = torch.nonzero(grayscale > 0, as_tuple=False)
