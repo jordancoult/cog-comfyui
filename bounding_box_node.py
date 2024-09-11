@@ -1,4 +1,4 @@
-import numpy as np
+import torch
 
 class BoundingBox:
 
@@ -20,29 +20,27 @@ class BoundingBox:
     CATEGORY = "Image Processing"
 
     def find_bounding_box(self, image):
-        # Assuming 'image' is a NumPy array with shape (H, W, C)
-        # where H is the height, W is the width, and C is the number of channels
-        
-        # Convert to grayscale to make processing easier
-        grayscale = np.sum(image, axis=2)
-        
+        # Assuming 'image' is a PyTorch tensor with shape (C, H, W)
+        # Convert to grayscale by summing the channels
+        grayscale = torch.sum(image, dim=0)
+
         # Find non-black pixels (non-zero in grayscale)
-        non_black_pixels = np.argwhere(grayscale > 0)
-        
-        if len(non_black_pixels) == 0:
+        non_black_pixels = torch.nonzero(grayscale > 0, as_tuple=False)
+
+        if non_black_pixels.size(0) == 0:
             # If no non-black pixels are found, return zeroed bounding box
             return (0, 0, 0, 0)
         
         # Get the coordinates of the bounding box
-        y_min, x_min = np.min(non_black_pixels, axis=0)
-        y_max, x_max = np.max(non_black_pixels, axis=0)
+        y_min, x_min = torch.min(non_black_pixels, dim=0)[0]
+        y_max, x_max = torch.max(non_black_pixels, dim=0)[0]
 
         # Calculate width and height
-        width = x_max - x_min + 1
-        height = y_max - y_min + 1
+        width = (x_max - x_min).item() + 1
+        height = (y_max - y_min).item() + 1
 
         # Return width, height, and top-left corner (x_min, y_min)
-        return (width, height, x_min, y_min)
+        return (width, height, x_min.item(), y_min.item())
 
 
 # Register the node with the necessary mappings
