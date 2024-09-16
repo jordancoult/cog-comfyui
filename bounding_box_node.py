@@ -64,6 +64,11 @@ class ResizeFromKPS:
         largest_side = max(bbox_width, bbox_height)
         print(f"BBox width: {bbox_width}, height: {bbox_height}, largest_side: {largest_side}")
 
+        # If bbox is already big enough, do nothing. don't crop
+        if (bbox_width / image.shape[1] >= image_kps_ratio):
+            print("Bounding box is already big enough, don't crop.")
+            return (True, image.shape[1], image.shape[0], 0, 0)
+
         # Calculate new size and crop coordinates from widths
         new_total_width = int(largest_side / image_kps_ratio)
         new_total_height = int(new_total_width * (image.shape[0] / image.shape[1]))
