@@ -66,19 +66,19 @@ class ResizeFromKPS:
 
         # Calculate new size and crop coordinates from widths
         new_total_width = int(largest_side / image_kps_ratio)
-        new_total_height = int(new_total_width * (image.shape[1] / image.shape[2]))
+        new_total_height = int(new_total_width * (image.shape[0] / image.shape[1]))
         print(f"New total width: {new_total_width}, New total height: {new_total_height}")
 
         # Calculate top-left coordinates of new width/height such that the new w/h is centered in the original image
-        x = int((image.shape[2] - new_total_width) / 2)
-        y = int((image.shape[1] - new_total_height) / 2)
+        x = int((image.shape[1] - new_total_width) / 2)
+        y = int((image.shape[0] - new_total_height) / 2)
         print(f"Top-left corner coordinates - x: {x}, y: {y}")
 
         # Basic assertions
         assert x >= 0, "X coordinate of crop is negative"
         assert y >= 0, "Y coordinate of crop is negative"
-        assert x + new_total_width <= image.shape[2], "X coordinate of crop exceeds image width"
-        assert y + new_total_height <= image.shape[1], "Y coordinate of crop exceeds image height"
+        assert x + new_total_width <= image.shape[1], "X coordinate of crop exceeds image width"
+        assert y + new_total_height <= image.shape[0], "Y coordinate of crop exceeds image height"
         
         # Return new crop width, height, x, y
         print(f"Returning values - found_bbox: True, width: {new_total_width}, height: {new_total_height}, x: {x}, y: {y}")
