@@ -64,11 +64,6 @@ class ResizeFromKPS:
         largest_side = max(bbox_width, bbox_height)
         print(f"BBox width: {bbox_width}, height: {bbox_height}, largest_side: {largest_side}")
 
-        # If bbox is already big enough, do nothing. don't crop
-        if (bbox_width / image.shape[1] >= image_kps_ratio):
-            print("Bounding box is already big enough, don't crop.")
-            return (True, image.shape[1], image.shape[0], 0, 0)
-
         # Calculate new size and crop coordinates from widths
         new_total_width = int(largest_side / image_kps_ratio)
         new_total_height = int(new_total_width * (image.shape[0] / image.shape[1]))
@@ -79,11 +74,13 @@ class ResizeFromKPS:
         y = int((image.shape[0] - new_total_height) / 2)
         print(f"Top-left corner coordinates - x: {x}, y: {y}")
 
-        # Basic assertions
-        assert x >= 0, "X coordinate of crop is negative"
-        assert y >= 0, "Y coordinate of crop is negative"
-        assert x + new_total_width <= image.shape[1], "X coordinate of crop exceeds image width"
-        assert y + new_total_height <= image.shape[0], "Y coordinate of crop exceeds image height"
+        # If x or y are negative then they should both be 0 and width/height should be equal to totals
+        if x < 0 or y < 0:
+            x = 0
+            y = 0
+            new_total_width = image.shape[1]
+            new_total_height = image.shape[0]
+            print(f"Top-left corner coordinates - x: {x}, y: {y}. Resetting width and height to image size so no crop is performed.")
         
         # Return new crop width, height, x, y
         print(f"Returning values - found_bbox: True, width: {new_total_width}, height: {new_total_height}, x: {x}, y: {y}")
