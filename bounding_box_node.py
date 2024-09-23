@@ -111,7 +111,7 @@ class CropAroundKPS:
             return UNCROPPED_IMAGE
         
         # Return new crop width, height, x, y
-        print(f"Returning values - found_bbox: True, width: {new_total_width}, height: {new_total_height}, new_x: {new_x}, new_y: {new_y}")
+        print(f"Returning values - width: {new_total_width}, height: {new_total_height}, new_x: {new_x}, new_y: {new_y}")
         return (new_total_width, new_total_height, new_x, new_y)
 
 # Register the node with the necessary mappings
@@ -120,5 +120,5 @@ NODE_CLASS_MAPPINGS = {
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
-    "CropAroundKPS": "Get Crop Info from KPS image"
+    "CropAroundKPS": "Prepare Crop Around Keypoints"
 }
