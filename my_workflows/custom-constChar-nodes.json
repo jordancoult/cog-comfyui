@@ -1,0 +1,70 @@
+[
+  {
+    "repo": "https://github.com/cubiq/ComfyUI_IPAdapter_plus",
+    "commit": "ce9b621"
+  },
+  {
+    "repo": "https://github.com/cubiq/ComfyUI_InstantID",
+    "commit": "d8c70a0"
+  },
+  {
+    "repo": "https://github.com/comfyanonymous/ComfyUI_experiments",
+    "commit": "934dba9"
+  },
+  {
+    "repo": "https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes",
+    "commit": "d78b780"
+  },
+  {
+    "repo": "https://github.com/WASasquatch/was-node-suite-comfyui",
+    "commit": "72290fc"
+  },
+  {
+    "repo": "https://github.com/jordancoult/ComfyUI_HelpfulNodes",
+    "commit": ""
+  },
+  {
+    "repo": "https://github.com/Acly/comfyui-tooling-nodes",
+    "commit": "d1dcf12"
+  },
+  {
+    "repo": "https://github.com/kijai/ComfyUI-Florence2",
+    "commit": "07b71d4"
+  },
+  {
+    "repo": "https://github.com/evanspearman/ComfyMath",
+    "commit": "be9beab"
+  },
+  {
+    "repo": "https://github.com/TinyTerra/ComfyUI_tinyterraNodes",
+    "commit": "52711d5"
+  },
+  {
+    "repo": "https://github.com/rgthree/rgthree-comfy",
+    "commit": "ab0a59a"
+  },
+  {
+    "repo": "https://github.com/neverbiasu/ComfyUI-SAM2",
+    "commit": ""
+  },
+  {
+    "repo": "https://github.com/pythongosssss/ComfyUI-Custom-Scripts",
+    "commit": "edc5321"
+  },
+  {
+    "repo": "https://github.com/Derfuu/Derfuu_ComfyUI_ModdedNodes",
+    "commit": "d0905be"
+  },
+  {
+    "repo": "https://github.com/fofr/ComfyUI-Impact-Pack",
+    "commit": "ab17f88"
+  },
+  {
+    "repo": "https://github.com/Acly/comfyui-inpaint-nodes",
+    "commit": "717cb77"
+  },
+  {
+    "repo": "https://github.com/jamesWalker55/comfyui-various",
+    "commit": "d0724cc"
+  }
+]
