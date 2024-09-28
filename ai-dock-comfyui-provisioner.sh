@@ -114,6 +114,7 @@ function provisioning_start() {
     DISK_GB_USED=$(($(df --output=used -m "${WORKSPACE}" | tail -n1) / 1000))
     DISK_GB_ALLOCATED=$(($DISK_GB_AVAILABLE + $DISK_GB_USED))
     provisioning_print_header
+    update_comfyui
     provisioning_get_nodes
     printf "\n##############################################\n#                                            #\n#          installing from custom_nodes.json#\n#                                            #\n#         This will take some time           #\n#                                            #\n# Your container will be ready on completion #\n#                                            #\n##############################################\n\n"
     provisioning_get_nodes_from_json
@@ -266,6 +267,13 @@ function provisioning_print_end() {
 # Download from $1 URL to $2 file path
 function provisioning_download() {
     wget -qnc --content-disposition --show-progress -e dotbytes="${3:-4M}" -P "$2" "$1"
+}
+
+# Update ComfyUI to latest
+function update_comfyui() {
+    printf "Updating ComfyUI...\n"
+    # cd to cd /workspace/ComfyUI/
+    ( cd "$WORKSPACE/ComfyUI" && git pull origin master )
 }
 
 provisioning_start
