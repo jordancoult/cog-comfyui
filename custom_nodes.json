@@ -8,8 +8,12 @@
     "commit": "4cd233c"
   },
   {
-    "repo": "https://github.com/fofr/ComfyUI-Impact-Pack",
-    "commit": "ab17f88"
+    "repo": "https://github.com/ltdrdata/ComfyUI-Impact-Pack",
+    "commit": "0b1ac0f"
+  },
+  {
+    "repo": "https://github.com/ltdrdata/ComfyUI-Impact-Subpack",
+    "commit": "2074152"
   },
   {
     "repo": "https://github.com/ltdrdata/ComfyUI-Inspire-Pack",
